@@ -61,9 +61,13 @@ def main() -> None:
                 print("\n\nApp closed.")
                 break
 
-            except Exception as error:
-                logger.exception("Application error occurred.")
+            except RuntimeError as error:
+                logger.error("%s", error)
                 print(f"\nError: {error}")
+
+            except Exception as error:
+                logger.exception("Unexpected application error occurred.")
+                print(f"\nUnexpected error: {error}")
 
     finally:
         client.close()
