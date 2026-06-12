@@ -1,5 +1,5 @@
 from config import APP_ENV, MODEL_NAME
-from llm_client import create_client_and_chat, send_message
+from llm_client import create_chat, create_client_and_chat, send_message
 
 
 def main() -> None:
@@ -25,7 +25,7 @@ def main() -> None:
                     break
 
                 if prompt.lower() == "/clear":
-                    chat = client.chats.create(model=MODEL_NAME)
+                    chat = create_chat(client)
                     print("\nConversation history cleared.")
                     continue
 

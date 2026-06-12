@@ -2,13 +2,23 @@ from google import genai
 from google.genai import errors
 
 from config import GEMINI_API_KEY, MODEL_NAME
+from prompts import SYSTEM_INSTRUCTION
 
+def create_chat(client):
+    """Create a fresh Gemini chat session."""
+
+    return client.chats.create(
+        model=MODEL_NAME,
+        config={
+            "system_instruction": SYSTEM_INSTRUCTION,
+        },
+    )
 
 def create_client_and_chat():
-    """Create the Gemini client and a chat session."""
+    """Create the Gemini client and initial chat session."""
 
     client = genai.Client(api_key=GEMINI_API_KEY)
-    chat = client.chats.create(model=MODEL_NAME)
+    chat = create_chat(client)
 
     return client, chat
 
