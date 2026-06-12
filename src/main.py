@@ -1,14 +1,16 @@
 from config import APP_ENV, MODEL_NAME
 from llm_client import create_chat, create_client_and_chat, send_message
+from utils import is_clear_command, is_exit_command, print_header
 
 
 def main() -> None:
-    print("=" * 50)
-    print("Gemini Cloud AI Chatbot")
-    print(f"Environment: {APP_ENV}")
-    print(f"Model: {MODEL_NAME}")
-    print("Commands: /clear, /exit")
-    print("=" * 50)
+    """Run the interactive Gemini chatbot."""
+
+    print_header(
+        title="Gemini Cloud AI Chatbot",
+        environment=APP_ENV,
+        model=MODEL_NAME,
+    )
 
     client, chat = create_client_and_chat()
 
@@ -20,16 +22,17 @@ def main() -> None:
                 if not prompt:
                     continue
 
-                if prompt.lower() in {"/exit", "exit", "quit"}:
+                if is_exit_command(prompt):
                     print("\nApp closed.")
                     break
 
-                if prompt.lower() == "/clear":
+                if is_clear_command(prompt):
                     chat = create_chat(client)
                     print("\nConversation history cleared.")
                     continue
 
                 print("\nGemini: Thinking...\n")
+
                 answer = send_message(chat, prompt)
                 print(answer)
 
