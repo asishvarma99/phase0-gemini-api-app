@@ -1,37 +1,28 @@
-import os
-
-from dotenv import load_dotenv
 from google import genai
 
+from config import APP_ENV, GEMINI_API_KEY, MODEL_NAME
 
-MODEL_NAME = "gemini-2.5-flash-lite"
 
+def create_chat(client: genai.Client):
+    """Create a new Gemini chat session."""
 
-def load_api_key() -> str:
-    load_dotenv()
-
-    api_key = os.getenv("GEMINI_API_KEY")
-
-    if not api_key:
-        raise RuntimeError(
-            "GEMINI_API_KEY is missing. Add it to the local .env file."
-        )
-
-    return api_key
+    return client.chats.create(
+        model=MODEL_NAME,
+    )
 
 
 def main() -> None:
+    """Run the interactive Gemini chatbot."""
+
     print("=" * 50)
     print("Gemini Cloud AI Chatbot")
+    print(f"Environment: {APP_ENV}")
+    print(f"Model: {MODEL_NAME}")
     print("Commands: /clear, /exit")
     print("=" * 50)
 
-    # Keep the client alive for the entire application.
-    client = genai.Client(api_key=load_api_key())
-
-    chat = client.chats.create(
-        model=MODEL_NAME,
-    )
+    client = genai.Client(api_key=GEMINI_API_KEY)
+    chat = create_chat(client)
 
     try:
         while True:
@@ -46,9 +37,7 @@ def main() -> None:
                     break
 
                 if prompt.lower() == "/clear":
-                    chat = client.chats.create(
-                        model=MODEL_NAME,
-                    )
+                    chat = create_chat(client)
                     print("\nConversation history cleared.")
                     continue
 
