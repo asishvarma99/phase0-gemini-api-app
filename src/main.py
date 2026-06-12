@@ -1,7 +1,15 @@
-from config import APP_ENV, MODEL_NAME
-from llm_client import create_chat, create_client_and_chat, send_message
-from logger import get_logger
-from utils import is_clear_command, is_exit_command, print_header
+from src.config import APP_ENV, MODEL_NAME
+from src.llm_client import (
+    create_chat,
+    create_client_and_chat,
+    send_message,
+)
+from src.logger import get_logger
+from src.utils import (
+    is_clear_command,
+    is_exit_command,
+    print_header,
+)
 
 
 logger = get_logger(__name__)

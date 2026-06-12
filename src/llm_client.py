@@ -3,9 +3,9 @@ from typing import Any
 from google import genai
 from google.genai import errors
 
-from config import GEMINI_API_KEY, MODEL_NAME
-from logger import get_logger
-from prompts import SYSTEM_INSTRUCTION
+from src.config import GEMINI_API_KEY, MODEL_NAME
+from src.logger import get_logger
+from src.prompts import SYSTEM_INSTRUCTION
 
 
 logger = get_logger(__name__)
