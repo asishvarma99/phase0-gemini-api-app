@@ -1,19 +1,8 @@
-from google import genai
-
-from config import APP_ENV, GEMINI_API_KEY, MODEL_NAME
-
-
-def create_chat(client: genai.Client):
-    """Create a new Gemini chat session."""
-
-    return client.chats.create(
-        model=MODEL_NAME,
-    )
+from config import APP_ENV, MODEL_NAME
+from llm_client import create_client_and_chat, send_message
 
 
 def main() -> None:
-    """Run the interactive Gemini chatbot."""
-
     print("=" * 50)
     print("Gemini Cloud AI Chatbot")
     print(f"Environment: {APP_ENV}")
@@ -21,8 +10,7 @@ def main() -> None:
     print("Commands: /clear, /exit")
     print("=" * 50)
 
-    client = genai.Client(api_key=GEMINI_API_KEY)
-    chat = create_chat(client)
+    client, chat = create_client_and_chat()
 
     try:
         while True:
@@ -37,19 +25,13 @@ def main() -> None:
                     break
 
                 if prompt.lower() == "/clear":
-                    chat = create_chat(client)
+                    chat = client.chats.create(model=MODEL_NAME)
                     print("\nConversation history cleared.")
                     continue
 
                 print("\nGemini: Thinking...\n")
-
-                response = chat.send_message(prompt)
-
-                if not response.text:
-                    print("Gemini returned an empty response.")
-                    continue
-
-                print(response.text)
+                answer = send_message(chat, prompt)
+                print(answer)
 
             except KeyboardInterrupt:
                 print("\n\nApp closed.")
