@@ -8,8 +8,6 @@ MODEL_NAME = "gemini-2.5-flash-lite"
 
 
 def load_api_key() -> str:
-    """Load and validate the Gemini API key."""
-
     load_dotenv()
 
     api_key = os.getenv("GEMINI_API_KEY")
@@ -22,34 +20,57 @@ def load_api_key() -> str:
     return api_key
 
 
-def generate_response(prompt: str) -> str:
-    """Send a prompt to Gemini and return the generated text."""
+def main() -> None:
+    print("=" * 50)
+    print("Gemini Cloud AI Chatbot")
+    print("Commands: /clear, /exit")
+    print("=" * 50)
 
+    # Keep the client alive for the entire application.
     client = genai.Client(api_key=load_api_key())
 
-    response = client.models.generate_content(
+    chat = client.chats.create(
         model=MODEL_NAME,
-        contents=prompt,
     )
 
-    if not response.text:
-        raise RuntimeError("Gemini returned an empty response.")
+    try:
+        while True:
+            try:
+                prompt = input("\nYou: ").strip()
 
-    return response.text
+                if not prompt:
+                    continue
 
+                if prompt.lower() in {"/exit", "exit", "quit"}:
+                    print("\nApp closed.")
+                    break
 
-def main() -> None:
-    prompt = (
-        "Explain the difference between local AI and cloud AI "
-        "in exactly three concise bullet points."
-    )
+                if prompt.lower() == "/clear":
+                    chat = client.chats.create(
+                        model=MODEL_NAME,
+                    )
+                    print("\nConversation history cleared.")
+                    continue
 
-    print("Sending request to Gemini...\n")
+                print("\nGemini: Thinking...\n")
 
-    answer = generate_response(prompt)
+                response = chat.send_message(prompt)
 
-    print("Gemini response:\n")
-    print(answer)
+                if not response.text:
+                    print("Gemini returned an empty response.")
+                    continue
+
+                print(response.text)
+
+            except KeyboardInterrupt:
+                print("\n\nApp closed.")
+                break
+
+            except Exception as error:
+                print(f"\nError: {error}")
+
+    finally:
+        client.close()
 
 
 if __name__ == "__main__":
